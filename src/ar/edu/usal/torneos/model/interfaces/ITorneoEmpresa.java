@@ -10,5 +10,7 @@ public interface ITorneoEmpresa {
 	public static final int PUNTOS_PARTIDO_PERDIDO = 0;
 	public static final int PUNTOS_PARTIDO_EMPATADO = 1;
 	
+	public static final int MAX_JUGADORES_EQUIPO = 7;
+	
 	public double asignarPremios();
 }

@@ -6,18 +6,31 @@ public class Equipos {
 
 	private String nombre;
 	private String cuil;
-	private ArrayList<Empleados> empleados;
+	private ArrayList<Jugadores> jugadores;
 	private int puntos;
 	
-	public Equipos(String nombre, String cuil, ArrayList<Empleados> empleados, int puntos) {
+	public Equipos(String nombre, String cuil, ArrayList<Jugadores> jugadores, int puntos) {
 		super();
 		this.nombre = nombre;
 		this.cuil = cuil;
-		this.empleados = empleados;
+		this.jugadores = jugadores;
 		this.setPuntos(puntos);
 	}
 	
 	public Equipos(){}
+	
+	@Override
+	public boolean equals(Object arg0) {
+		
+		boolean esIgual = false;
+		
+		if(arg0 instanceof Equipos){
+			
+			esIgual = this.nombre.equals(((Equipos) arg0).getNombre());	
+		}
+		
+		return esIgual; 
+	}
 
 	public String getNombre() {
 		return nombre;
@@ -35,12 +48,12 @@ public class Equipos {
 		this.cuil = cuil;
 	}
 
-	public ArrayList<Empleados> getEmpleados() {
-		return empleados;
+	public ArrayList<Jugadores> getJugadores() {
+		return jugadores;
 	}
 
-	public void setEmpleados(ArrayList<Empleados> empleados) {
-		this.empleados = empleados;
+	public void setJugadores(ArrayList<Jugadores> jugadores) {
+		this.jugadores = jugadores;
 	}
 
 	public int getPuntos() {

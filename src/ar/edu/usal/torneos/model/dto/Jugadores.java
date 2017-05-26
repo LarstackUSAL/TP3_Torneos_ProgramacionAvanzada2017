@@ -1,20 +1,33 @@
 package ar.edu.usal.torneos.model.dto;
 
-public class Empleados {
+public class Jugadores {
 
 	private String nombre;
 	private String apellido;
 	private int cuil;
 	
-	public Empleados(String nombre, String apellido, int cuil) {
+	public Jugadores(String nombre, String apellido, int cuil) {
 		super();
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.cuil = cuil;
 	}
 	
-	public Empleados(){}
+	public Jugadores(){}
 
+	@Override
+	public boolean equals(Object arg0) {
+	
+		boolean esIgual = false;
+		
+		if(arg0 instanceof Jugadores){
+			
+			esIgual = ((Jugadores) arg0).getCuil() == this.cuil;
+		}
+		
+		return esIgual;
+	}
+	
 	public String getNombre() {
 		return nombre;
 	}

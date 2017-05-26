@@ -7,28 +7,31 @@ import ar.edu.usal.torneos.model.interfaces.IPagoInscripcion;
 
 public class Torneos implements IPagoInscripcion{
 
-	private Calendar anio;
+	private int id;
+	private int anioInicioTorneo;
 	private double costoInscripcion;
+	private int cantidadEquipos;
+	private int puntuacionMaxima;
+	private int puntuacionMinima;
+	private int totalGoles;
+
 	private ArrayList<Equipos> equipos;
 	private ArrayList<Partidos> partidos;
 	
-	public Torneos(Calendar anio, double costoInscripcion, 
-			ArrayList<Equipos> equipos, ArrayList<Partidos> partidos) {
-		super();
-		this.anio = anio;
-		this.equipos = equipos;
-		this.partidos = partidos;
-		this.setCostoInscripcion(costoInscripcion);
-	}
-	
 	public Torneos(){}
 
-	public Calendar getAnio() {
-		return anio;
-	}
-
-	public void setAnio(Calendar anio) {
-		this.anio = anio;
+	public Torneos(int id, int anioInicioTorneo, double costoInscripcion,
+			int cantidadEquipos, int puntuacionMaxima, int puntuacionMinima,
+			int totalGoles, ArrayList<Equipos> equipos) {
+		super();
+		this.id = id;
+		this.anioInicioTorneo = anioInicioTorneo;
+		this.costoInscripcion = costoInscripcion;
+		this.cantidadEquipos = cantidadEquipos;
+		this.puntuacionMaxima = puntuacionMaxima;
+		this.puntuacionMinima = puntuacionMinima;
+		this.totalGoles = totalGoles;
+		this.equipos = equipos;
 	}
 
 	public ArrayList<Equipos> getEquipos() {
@@ -43,8 +46,24 @@ public class Torneos implements IPagoInscripcion{
 		return partidos;
 	}
 
-	public void setPartidos(ArrayList<Partidos> partidos) {
-		this.partidos = partidos;
+	public void setPartidos(Equipos equipoLocal, Equipos equipoVisitante, 
+			int golesLocal, int golesVisitante, Calendar fechaPartido, Integer indiceArrayPartidos) {
+		
+		if(indiceArrayPartidos != null){
+			
+			Partidos partidoTmp = this.partidos.get(indiceArrayPartidos);
+			
+			partidoTmp.setEquipoLocal(equipoLocal);
+			partidoTmp.setEquipovisitante(equipoVisitante);
+			partidoTmp.setGolesLocal(golesLocal);
+			partidoTmp.setGolesVisitante(golesVisitante);
+			partidoTmp.setFechaPartido(fechaPartido);
+		
+		}else{
+			
+			this.partidos.add(new Partidos(equipoLocal, equipoVisitante, golesLocal, golesVisitante, fechaPartido));
+		}
+		
 	}
 
 	public double getCostoInscripcion() {		
@@ -53,5 +72,53 @@ public class Torneos implements IPagoInscripcion{
 
 	public void setCostoInscripcion(double costoInscripcion) {
 		this.costoInscripcion = costoInscripcion;
+	}
+
+	public int getAnioInicioTorneo() {
+		return anioInicioTorneo;
+	}
+
+	public void setAnioInicioTorneo(int anioInicioTorneo) {
+		this.anioInicioTorneo = anioInicioTorneo;
+	}
+
+	public int getCantidadEquipos() {
+		return cantidadEquipos;
+	}
+
+	public void setCantidadEquipos(int cantidadEquipos) {
+		this.cantidadEquipos = cantidadEquipos;
+	}
+
+	public int getPuntuacionMaxima() {
+		return puntuacionMaxima;
+	}
+
+	public void setPuntuacionMaxima(int puntuacionMaxima) {
+		this.puntuacionMaxima = puntuacionMaxima;
+	}
+
+	public int getPuntuacionMinima() {
+		return puntuacionMinima;
+	}
+
+	public void setPuntuacionMinima(int puntuacionMinima) {
+		this.puntuacionMinima = puntuacionMinima;
+	}
+
+	public int getTotalGoles() {
+		return totalGoles;
+	}
+
+	public void setTotalGoles(int totalGoles) {
+		this.totalGoles = totalGoles;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 }

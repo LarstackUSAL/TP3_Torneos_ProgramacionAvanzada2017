@@ -5,16 +5,16 @@ import java.util.Calendar;
 public class Partidos {
 
 	private Equipos equipoLocal;
-	private Equipos equipovisitante;
+	private Equipos equipoVisitante;
 	private int golesLocal;
 	private int golesVisitante;
 	private Calendar fechaPartido;
 	
-	public Partidos(Equipos equipoLocal, Equipos equipovisitante,
+	public Partidos(Equipos equipoLocal, Equipos equipoVisitante,
 			int golesLocal, int golesVisitante, Calendar fechaPartido) {
 		super();
 		this.equipoLocal = equipoLocal;
-		this.equipovisitante = equipovisitante;
+		this.equipoVisitante = equipoVisitante;
 		this.golesLocal = golesLocal;
 		this.golesVisitante = golesVisitante;
 		this.fechaPartido = fechaPartido;
@@ -30,12 +30,12 @@ public class Partidos {
 		this.equipoLocal = equipoLocal;
 	}
 
-	public Equipos getEquipovisitante() {
-		return equipovisitante;
+	public Equipos getEquipoVisitante() {
+		return equipoVisitante;
 	}
 
-	public void setEquipovisitante(Equipos equipovisitante) {
-		this.equipovisitante = equipovisitante;
+	public void setEquipovisitante(Equipos equipoVisitante) {
+		this.equipoVisitante = equipoVisitante;
 	}
 
 	public int getGolesLocal() {
