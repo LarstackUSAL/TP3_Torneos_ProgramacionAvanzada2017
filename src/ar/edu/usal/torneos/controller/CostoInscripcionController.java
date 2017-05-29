@@ -18,7 +18,8 @@ public class CostoInscripcionController {
 		
 		TorneosDao torneosDao = TorneosDao.getInstance();
 		
-		if(torneosDao.registrarCostoInscripcion())
+		if(torneosDao.registrarCostoInscripcion(costoInscripcion))
 			this.costoInscripcionView.registracionCostoSuccess();
+		else this.costoInscripcionView.registracionCostoFailed();
 	}
 }

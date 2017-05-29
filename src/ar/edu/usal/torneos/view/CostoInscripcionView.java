@@ -17,4 +17,9 @@ public class CostoInscripcionView {
 		
 		System.out.println("Se ha registrado el costo de inscripcion del nuevo torneo con exito!");
 	}
+
+	public void registracionCostoFailed() {
+		
+		System.out.println("Se ha verificado un error al registrar el costo de inscripcion del nuevo torneo.");
+	}
 }

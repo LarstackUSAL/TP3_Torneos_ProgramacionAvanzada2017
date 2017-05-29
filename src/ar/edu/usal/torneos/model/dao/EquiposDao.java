@@ -23,7 +23,7 @@ public class EquiposDao {
 
 		this.equipos = new ArrayList<Equipos>();
 		this.equiposTorneosMap = new HashMap<Integer,ArrayList<Equipos>>();
-		this.loadEquipos();
+		this.loadEquiposTorneoActual();
 		this.loadTorneosEquipos();
 	}
 
@@ -37,7 +37,7 @@ public class EquiposDao {
 		return equiposDaoInstance;
 	}
 
-	private void loadEquipos(){
+	private void loadEquiposTorneoActual(){
 
 		Scanner equiposScanner;
 
@@ -161,7 +161,17 @@ public class EquiposDao {
 					
 					try{
 					
-						Equipos equipo = this.getEquipoByName(nombreEquipo);
+						Equipos equipo = null;
+						
+						if(idTorneo == TorneosDao.getIdTorneoActual()){
+							
+							equipo = this.getEquipoByName(nombreEquipo);
+						}else{
+							
+							equipo = new Equipos();
+							equipo.setNombre(nombreEquipo);
+						}
+						
 						equiposTorneoList.add(equipo);
 					
 					}catch(EquipoInexistenteException e){

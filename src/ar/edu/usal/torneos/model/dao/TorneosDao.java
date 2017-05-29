@@ -11,9 +11,6 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import ar.edu.usal.hotel.model.dto.Clientes;
-import ar.edu.usal.hotel.model.dto.ClientesHabitacion;
-import ar.edu.usal.hotel.utils.Validador;
 import ar.edu.usal.torneos.model.dto.Equipos;
 import ar.edu.usal.torneos.model.dto.Torneos;
 import ar.edu.usal.torneos.model.interfaces.ITorneoEmpresa;
@@ -84,9 +81,9 @@ public class TorneosDao implements ITorneoEmpresa{
 				
 				torneo.setEquipos(equiposDao.getEquiposTorneoById(id));
 								
-				for (int i = 0; i < partidosDao.getDatosPartidosTorneos().size(); i++) {
+				for (int i = 0; i < partidosDao.getResultadosPartidosTorneos().size(); i++) {
 					
-					HashMap<String, Object> datosTmp = partidosDao.getDatosPartidosTorneos().get(i);
+					HashMap<String, Object> datosTmp = partidosDao.getResultadosPartidosTorneos().get(i);
 					
 					if((int)datosTmp.get("idTorneo") == id){
 						
@@ -178,16 +175,13 @@ public class TorneosDao implements ITorneoEmpresa{
 		{
 			Torneos torneo = this.torneosList.get(i);
 
-
 			torneosOut.println(
-							idtorneo + ";" +
-							numeroHabitacion + ";" +
-							fechaCheckIn + ";" +
-							fechaCheckOut + ";" +
-							diasPermanencia + ";" +
-							torneoEnCurso + ";" +
-							listaDocumentos
-					);
+					torneo.getId() + " " +
+							torneo.getAnioInicioTorneo() + " " +
+							torneo.getCantidadEquipos() + " " +
+							torneo.getPuntuacionMaxima() + " " +
+							torneo.getPuntuacionMinima()+ " " +
+							torneo.getTotalGoles());
 		}
 
 		torneosOut.close();
@@ -197,11 +191,61 @@ public class TorneosDao implements ITorneoEmpresa{
 		FileWriter idtorneoFile = new FileWriter("./archivos/ID_TORNEOS.txt");
 		PrintWriter idtorneoOut = new PrintWriter(idtorneoFile);
 		
-		idtorneoOut.println(nextIdtorneo);
+		idtorneoOut.println(nextIdTorneo);
 		idtorneoOut.close();
 		idtorneoFile.close();
 	}
 	
+	// Al registrar un nuevo costo de inscripcion, se inicializa un nuevo torneo.
+	public boolean registrarCostoInscripcion(double costoInscripcion) {
+
+		// Se valida que no haya un torneo en curso, ya que, por definicion del enunciado, los torneos son anuales(LR)
+		if(this.hayTorneoEnCurso()){
+			
+			throw new HayTorneoEnCursoException();
+		}else{
+			
+			Torneos torneo = new Torneos();
+
+			torneo.setId(id);
+			torneo.setAnioInicioTorneo(anioInicioTorneo);
+			torneo.setCantidadEquipos(cantidadEquipos);
+			torneo.setPuntuacionMaxima(puntuacionMaxima);
+			torneo.setPuntuacionMinima(puntuacionMinima);
+			torneo.setTotalGoles(totalGoles);
+			torneo.setCostoInscripcion(valoresMap.get(anioInicioTorneo));
+			
+			torneo.setEquipos(equiposDao.getEquiposTorneoById(id));
+			setPartidos
+		}
+	}
+	
+	private boolean hayTorneoEnCurso() {
+		
+		Scanner tablaPosicionesScanner;
+
+		File directoryArchivos = new File("./archivos/");
+		File[] archivosArray = directoryArchivos.listFiles();
+
+		int contadorTablaPosiciones = 0;
+		
+		for (int i = 0; i < archivosArray.length; i++) {
+
+			File file = archivosArray[i];
+
+			if (file.isFile()){
+
+				String nombreFile = file.getName();
+				if (nombreFile.endsWith(".txt") && nombreFile.startsWith("TablaPosiciones")){
+					
+					contadorTablaPosiciones++;
+				}
+			}
+		}
+		
+		return this.torneosList.size() > contadorTablaPosiciones;
+	}
+
 	private static void loadNextId() {
 		
 		File idTorneosFile = new File("./archivos/ID_TORNEOS.txt");
@@ -246,4 +290,8 @@ public class TorneosDao implements ITorneoEmpresa{
 		return idReturn;
 	}
 	
+	public static int getIdTorneoActual(){
+		
+		return nextIdTorneo;
+	}
 }
