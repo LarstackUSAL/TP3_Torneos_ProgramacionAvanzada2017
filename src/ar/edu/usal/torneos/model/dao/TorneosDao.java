@@ -80,19 +80,18 @@ public class TorneosDao implements ITorneoEmpresa{
 				torneo.setCostoInscripcion(valoresMap.get(anioInicioTorneo));
 				
 				torneo.setEquipos(equiposDao.getEquiposTorneoById(id));
-								
-				for (int i = 0; i < partidosDao.getResultadosPartidosTorneos().size(); i++) {
+				
+					ArrayList<HashMap> datosTmpList = partidosDao.getResultadosPartidosTorneos().get(id);
 					
-					HashMap<String, Object> datosTmp = partidosDao.getResultadosPartidosTorneos().get(i);
-					
-					if((int)datosTmp.get("idTorneo") == id){
+					for (int i = 0; i < datosTmpList.size(); i++) {				
+						
+						HashMap datosTmp = datosTmpList.get(i);
 						
 						torneo.setPartidos((Equipos)datosTmp.get("equipoLocal"),
 								(Equipos)datosTmp.get("equipoVisitante"), 
 								(int)datosTmp.get("golesLocal"),
 								(int)datosTmp.get("golesVisitante"),
 								(Calendar)datosTmp.get("fechaPartido"), null);
-					}
 				}
 				
 				this.torneosList.add(torneo);

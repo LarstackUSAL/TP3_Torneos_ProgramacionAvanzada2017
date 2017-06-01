@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import ar.edu.usal.torneos.model.dto.Equipos;
@@ -16,12 +17,12 @@ public class PartidosDao {
 
 	private static PartidosDao partidosDaoInstance = null;
 
-	private ArrayList<HashMap<String, Object>> resultadosPartidosTorneos;
+	private HashMap<Integer, ArrayList> resultadosPartidosTorneos;
 
 	private PartidosDao(){
 
-		this.resultadosPartidosTorneos = new ArrayList<HashMap<String, Object>>();
-		this.loadResultados();
+		this.resultadosPartidosTorneos = new HashMap<Integer, ArrayList>();
+		this.loadFixture();
 	}
 
 	public static PartidosDao getInstance(){
@@ -38,45 +39,72 @@ public class PartidosDao {
 		
 		EquiposDao equiposDao = EquiposDao.getInstance();
 		
-		File resultadosFile = new File("./archivos/Fixture.txt");
+		HashMap<Integer, ArrayList> resultadosMap = this.loadResultados();
+		
+		File fixtureFile = new File("./archivos/Fixture.txt");
+		Scanner fixtureScanner;
 		Scanner resultadosScanner;
 		
 		try {
 			
 			try {
-				resultadosFile.createNewFile();
+				fixtureFile.createNewFile();
 			
 			} catch (IOException e) {
 
-				System.out.println("Se ha verificado un error al cargar el archivo de resultados.");
+				System.out.println("Se ha verificado un error al cargar el archivo de fixture.");
 			}
 			
-			resultadosScanner = new Scanner(resultadosFile);
-				
-			while(resultadosScanner.hasNextLine()){
+			fixtureScanner = new Scanner(fixtureFile);
+
+			while(fixtureScanner.hasNextLine()){
 
 				HashMap<String, Object> datosPartidoMap = new HashMap<String, Object>();
 
-				String resultadoTxt = resultadosScanner.nextLine();
-
-				Calendar fechaPartido = Validador.stringToCalendar(resultadoTxt.substring(0, 10).trim(), "dd/MM/yyyy");
-				Equipos equipoLocal = equiposDao.getEquipoByName(resultadoTxt.substring(10, 55).trim());  
-				Equipos equipoVisitante = equiposDao.getEquipoByName(resultadoTxt.substring(55, 100).trim());
-				int golesLocal = Integer.valueOf(resultadoTxt.substring(100, 102).trim());
-				int golesVisitante = Integer.valueOf(resultadoTxt.substring(102, 104).trim());
-				int idTorneo = Integer.valueOf(resultadoTxt.substring(104, 108).trim());
+				Calendar fechaPartido = Validador.stringToCalendar(fixtureScanner.next().trim(), "dd/MM/yyyy");
+				Equipos equipoLocal = equiposDao.getEquipoByName(fixtureScanner.next().trim());  
+				Equipos equipoVisitante = equiposDao.getEquipoByName(fixtureScanner.next().trim());
+				int idTorneo = 0; 
 				
-				datosPartidoMap.put("fechaPartido", fechaPartido);
-				datosPartidoMap.put("equipoLocal", equipoLocal);
-				datosPartidoMap.put("equipoVisitante", equipoVisitante);
-				datosPartidoMap.put("golesLocal", golesLocal);
-				datosPartidoMap.put("golesVisitante", golesVisitante);
-				datosPartidoMap.put("idTorneo", idTorneo);
+				Iterator<Integer> resultadosKeySetIterator = resultadosMap.keySet().iterator();
 				
-				this.resultadosPartidosTorneos.add(datosPartidoMap);
+				iteradorResultados:
+				while (resultadosKeySetIterator.hasNext()) {
+					
+					int idTorneoTmp = resultadosKeySetIterator.next();
+					ArrayList<HashMap> resultadosList = resultadosMap.get(idTorneoTmp);
+					
+					for (int i = 0; i < resultadosList.size(); i++) {
+						
+						HashMap partidoMap = resultadosList.get(i);
+						
+						if(partidoMap.get("fechaPartido").equals(fechaPartido)
+								&& equipoLocal == partidoMap.get("equipoLocal")
+								&& equipoVisitante == partidoMap.get("equipoVisitante")){
+							
+							datosPartidoMap.put("equipoLocal", partidoMap.get("equipoLocal"));
+							datosPartidoMap.put("equipoVisitante", partidoMap.get("equipoVisitante"));
+							datosPartidoMap.put("golesLocal", partidoMap.get("golesLocal"));
+							datosPartidoMap.put("golesVisitante", partidoMap.get("golesVisitante"));
+							datosPartidoMap.put("fechaPartido", fechaPartido);
+							
+							idTorneo = idTorneoTmp;
+							
+							break iteradorResultados;
+						}
+					}
+				}
+				
+				if(resultadosPartidosTorneos.get(idTorneo) == null){
+					
+					resultadosPartidosTorneos.put(idTorneo, new ArrayList<HashMap>());
+				}
+				
+				resultadosPartidosTorneos.get(idTorneo).add(datosPartidoMap);
+				
 			}
 
-			resultadosScanner.close();
+			fixtureScanner.close();
 			
 		}catch(InputMismatchException e){
 			
@@ -91,13 +119,15 @@ public class PartidosDao {
 		}		
 	}
 	
-	private void loadResultados() {
+	private HashMap<Integer, ArrayList> loadResultados() {
 		
 		EquiposDao equiposDao = EquiposDao.getInstance();
 		
 		File resultadosFile = new File("./archivos/Resultados.txt");
 		Scanner resultadosScanner;
 		
+		HashMap<Integer, ArrayList> resultadosMap = new HashMap<Integer, ArrayList>();
+		
 		try {
 			
 			try {
@@ -108,8 +138,8 @@ public class PartidosDao {
 				System.out.println("Se ha verificado un error al cargar el archivo de resultados.");
 			}
 			
-			resultadosScanner = new Scanner(resultadosFile);
-				
+			resultadosScanner = new Scanner(resultadosFile); 
+			
 			while(resultadosScanner.hasNextLine()){
 
 				HashMap<String, Object> datosPartidoMap = new HashMap<String, Object>();
@@ -121,16 +151,21 @@ public class PartidosDao {
 				Equipos equipoVisitante = equiposDao.getEquipoByName(resultadoTxt.substring(55, 100).trim());
 				int golesLocal = Integer.valueOf(resultadoTxt.substring(100, 102).trim());
 				int golesVisitante = Integer.valueOf(resultadoTxt.substring(102, 104).trim());
-				int idTorneo = Integer.valueOf(resultadoTxt.substring(104, 108).trim());
 				
+				int idTorneo = Integer.valueOf(resultadoTxt.substring(104, 108).trim());
+
 				datosPartidoMap.put("fechaPartido", fechaPartido);
 				datosPartidoMap.put("equipoLocal", equipoLocal);
 				datosPartidoMap.put("equipoVisitante", equipoVisitante);
 				datosPartidoMap.put("golesLocal", golesLocal);
 				datosPartidoMap.put("golesVisitante", golesVisitante);
-				datosPartidoMap.put("idTorneo", idTorneo);
 				
-				this.resultadosPartidosTorneos.add(datosPartidoMap);
+				if(resultadosMap.get(idTorneo) == null){
+					
+					resultadosMap.put(idTorneo, new ArrayList<HashMap>());
+				}
+				
+				resultadosMap.get(idTorneo).add(datosPartidoMap);
 			}
 
 			resultadosScanner.close();
@@ -145,15 +180,17 @@ public class PartidosDao {
 		}catch(Exception e){
 			
 			System.out.println("Se ha verificado un error inesperado.");
-		}		
+		}
+		
+		return resultadosMap;
 	}
-	
-	public ArrayList<HashMap<String, Object>> getResultadosPartidosTorneos() {
+
+	public HashMap<Integer, ArrayList> getResultadosPartidosTorneos() {
 		return resultadosPartidosTorneos;
 	}
 
-	public void setDatosPartidosJugadosTorneos(
-			ArrayList<HashMap<String, Object>> resultadosPartidosTorneos) {
+	public void setResultadosPartidosTorneos(
+			HashMap<Integer, ArrayList> resultadosPartidosTorneos) {
 		this.resultadosPartidosTorneos = resultadosPartidosTorneos;
 	}
 }
