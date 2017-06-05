@@ -19,7 +19,7 @@ public class MenuController {
 			case 1:
 
 				CostoInscripcionController costoInscripcionController = new CostoInscripcionController();
-				costoInscripcionController.registrarCostoInscripcion();
+				costoInscripcionController.registrarCostoInscripcion(Integer.valueOf(args[0]));
 				break;
 			case 2:
 

@@ -4,9 +4,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class Validador {
 
@@ -512,4 +515,38 @@ public class Validador {
 			return true;
 		else return false;
 	}
+	
+//	public static LinkedHashMap<String, Integer> sortHashMapStringInteger(HashMap<String, Integer> parametroMap) {
+//	    
+//		List<String> keys = new ArrayList<String>(parametroMap.keySet());
+//	    List<Integer> values = new ArrayList<Integer>(parametroMap.values());
+//	    Collections.sort(values);
+//	    Collections.sort(keys);
+//
+//	    LinkedHashMap<String, Integer> mapOrdenado = new LinkedHashMap<String, Integer>();
+//
+//	    Iterator<Integer> valueIterator = values.iterator();
+//	    
+//	    while (valueIterator.hasNext()) {
+//	        
+//	    	Integer val = valueIterator.next();
+//	        Iterator<String> keyIterator = keys.iterator();
+//
+//	        while (keyIterator.hasNext()) {
+//	            
+//	        	String key = keyIterator.next();
+//	            Integer comp1 = parametroMap.get(key);
+//	            Integer comp2 = val;
+//
+//	            if (comp1.equals(comp2)) {
+//	            	
+//	            	keyIterator.remove();
+//	                mapOrdenado.put(key, val);
+//	                break;
+//	            }
+//	        }
+//	    }
+//	    return mapOrdenado;
+//	}
+
 }

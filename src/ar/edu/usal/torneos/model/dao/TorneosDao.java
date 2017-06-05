@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Random;
 import java.util.Scanner;
 
+import ar.edu.usal.torneos.exception.HayTorneoEnCursoException;
 import ar.edu.usal.torneos.model.dto.Equipos;
 import ar.edu.usal.torneos.model.dto.Torneos;
 import ar.edu.usal.torneos.model.interfaces.ITorneoEmpresa;
@@ -32,6 +34,7 @@ public class TorneosDao implements ITorneoEmpresa{
 		
 		if(torneosDaoInstance == null){
 			
+			loadNextId();
 			torneosDaoInstance = new TorneosDao();
 		}
 		
@@ -165,7 +168,7 @@ public class TorneosDao implements ITorneoEmpresa{
 		return valoresMap;
 	}
 	
-	public void actualizarArchivo() throws IOException {
+	public void actualizarArchivoTorneo() throws IOException {
 
 		FileWriter torneosFile = new FileWriter("./archivos/Torneos.txt");
 		PrintWriter torneosOut = new PrintWriter(torneosFile);
@@ -196,29 +199,71 @@ public class TorneosDao implements ITorneoEmpresa{
 	}
 	
 	// Al registrar un nuevo costo de inscripcion, se inicializa un nuevo torneo.
-	public boolean registrarCostoInscripcion(double costoInscripcion) {
+	public boolean registrarCostoInscripcion(double costoInscripcion, int nDiasEntrePartidos) throws HayTorneoEnCursoException, IOException {
+
+		boolean torneoCreado = false;
 
 		// Se valida que no haya un torneo en curso, ya que, por definicion del enunciado, los torneos son anuales(LR)
 		if(this.hayTorneoEnCurso()){
-			
+
 			throw new HayTorneoEnCursoException();
 		}else{
-			
+
+			EquiposDao equiposDao = EquiposDao.getInstance();
+
 			Torneos torneo = new Torneos();
 
-			torneo.setId(id);
-			torneo.setAnioInicioTorneo(anioInicioTorneo);
-			torneo.setCantidadEquipos(cantidadEquipos);
-			torneo.setPuntuacionMaxima(puntuacionMaxima);
-			torneo.setPuntuacionMinima(puntuacionMinima);
-			torneo.setTotalGoles(totalGoles);
-			torneo.setCostoInscripcion(valoresMap.get(anioInicioTorneo));
-			
-			torneo.setEquipos(equiposDao.getEquiposTorneoById(id));
-			setPartidos
+			torneo.setId(getNextIdTorneo());
+			torneo.setAnioInicioTorneo(Calendar.getInstance().get(Calendar.YEAR));
+
+			//Si es un numero impar, se decarta uno random
+			if(equiposDao.getEquipos().size() % 2 != 0){
+
+				int numeroEquipoRandom = 0;
+				Random rnd = new Random();
+				do{
+					numeroEquipoRandom = rnd.nextInt(equiposDao.getEquipos().size());
+				}while(numeroEquipoRandom < 0);
+
+				equiposDao.getEquipos().remove(numeroEquipoRandom);
+			}
+
+			torneo.setCantidadEquipos(equiposDao.getEquipos().size());
+			torneo.setCostoInscripcion(costoInscripcion);			
+			torneo.setEquipos(equiposDao.getEquipos());
+
+			PartidosDao partidosDao = PartidosDao.getInstance();
+			partidosDao.generarFixture(torneo, nDiasEntrePartidos);
+
+			torneosList.add(torneo);
+
+			this.actualizarInscripcionesValorAnual();
+			this.actualizarArchivoTorneo();
+			partidosDao.actualizarFixture();
+
+			torneoCreado = true;
+
+			return torneoCreado;			
 		}
 	}
 	
+	private void actualizarInscripcionesValorAnual() throws IOException {
+		
+		FileWriter  costoInscripcionesFile = new FileWriter("./archivos/InscripcionesValorAnual.txt");
+		PrintWriter costoInscripcionesOut = new PrintWriter(costoInscripcionesFile);
+
+		for(int i=0; i < this.torneosList.size(); i++)
+		{
+			Torneos torneo = this.torneosList.get(i);
+
+			costoInscripcionesOut.println(String.valueOf(torneo.getAnioInicioTorneo())
+					+ ";" + String.valueOf(torneo.getCostoInscripcion()));
+		}
+
+		costoInscripcionesOut.close();
+		costoInscripcionesFile.close();
+	}
+
 	private boolean hayTorneoEnCurso() {
 		
 		Scanner tablaPosicionesScanner;
@@ -243,6 +288,23 @@ public class TorneosDao implements ITorneoEmpresa{
 		}
 		
 		return this.torneosList.size() > contadorTablaPosiciones;
+	}
+	
+	public Torneos getTorneoById(int id){
+		
+		Torneos torneo = null;
+		
+		for (int i = 0; i < torneosList.size(); i++) {
+			
+			torneo = torneosList.get(i);
+			
+			if(torneo.getId() == id){
+				
+				break;
+			}
+		}
+		
+		return torneo;
 	}
 
 	private static void loadNextId() {
@@ -292,5 +354,13 @@ public class TorneosDao implements ITorneoEmpresa{
 	public static int getIdTorneoActual(){
 		
 		return nextIdTorneo;
+	}
+
+	public ArrayList<Torneos> getTorneosList() {
+		return torneosList;
+	}
+
+	public void setTorneosList(ArrayList<Torneos> torneosList) {
+		this.torneosList = torneosList;
 	}
 }

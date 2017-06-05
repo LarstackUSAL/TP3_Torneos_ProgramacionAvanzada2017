@@ -224,4 +224,12 @@ public class EquiposDao {
 	public void setEquiposTorneosMap(HashMap<Integer,ArrayList<Equipos>> equiposTorneosMap) {
 		this.equiposTorneosMap = equiposTorneosMap;
 	}
+
+	public ArrayList<Equipos> getEquipos() {
+		return equipos;
+	}
+
+	public void setEquipos(ArrayList<Equipos> equipos) {
+		this.equipos = equipos;
+	}
 }
