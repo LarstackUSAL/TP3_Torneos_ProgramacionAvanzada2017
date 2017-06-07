@@ -488,9 +488,10 @@ public class TorneosDao implements ITorneoEmpresa{
 	@Override
 	public double montoParaRepartir() {
 		
-		double costoInscripcion = this.getTorneoById(this.getIdTorneoActual()).getCostoInscripcion();
-		
-		return (costoInscripcion - (costoInscripcion * PORCENTAJE_ORGANIZACION));
+		Torneos torneo = this.getTorneoById(this.getIdTorneoActual());
+		double costoInscripcion = torneo.getCostoInscripcion();
+		double tot = costoInscripcion * torneo.getEquipos().size();
+		return (tot - (tot * PORCENTAJE_ORGANIZACION));
 	}
 
 	public Torneos getTorneoByAnioMesFin(int anio, int mes) {
