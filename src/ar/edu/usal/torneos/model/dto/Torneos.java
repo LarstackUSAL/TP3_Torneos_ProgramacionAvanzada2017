@@ -9,6 +9,8 @@ public class Torneos implements IPagoInscripcion{
 
 	private int id;
 	private int anioInicioTorneo;
+	private int anioFinTorneo;
+	private int mesFinTorneo;
 	private double costoInscripcion;
 	private int cantidadEquipos;
 	private int puntuacionMaxima;
@@ -22,7 +24,7 @@ public class Torneos implements IPagoInscripcion{
 
 	public Torneos(int id, int anioInicioTorneo, double costoInscripcion,
 			int cantidadEquipos, int puntuacionMaxima, int puntuacionMinima,
-			int totalGoles, ArrayList<Equipos> equipos) {
+			int totalGoles, int anioFinTorneo, int mesFinTorneo, ArrayList<Equipos> equipos) {
 		super();
 		this.id = id;
 		this.anioInicioTorneo = anioInicioTorneo;
@@ -31,6 +33,8 @@ public class Torneos implements IPagoInscripcion{
 		this.puntuacionMaxima = puntuacionMaxima;
 		this.puntuacionMinima = puntuacionMinima;
 		this.totalGoles = totalGoles;
+		this.anioFinTorneo = anioFinTorneo;
+		this.mesFinTorneo = mesFinTorneo;
 		this.equipos = equipos;
 	}
 
@@ -120,5 +124,21 @@ public class Torneos implements IPagoInscripcion{
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getAnioFinTorneo() {
+		return anioFinTorneo;
+	}
+
+	public void setAnioFinTorneo(int anioFinTorneo) {
+		this.anioFinTorneo = anioFinTorneo;
+	}
+
+	public int getMesFinTorneo() {
+		return mesFinTorneo;
+	}
+
+	public void setMesFinTorneo(int mesFinTorneo) {
+		this.mesFinTorneo = mesFinTorneo;
 	}
 }

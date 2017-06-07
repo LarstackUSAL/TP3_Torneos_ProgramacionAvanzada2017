@@ -34,6 +34,7 @@ public class MenuController {
 
 				ConsultarEstadisticasController consultarEstadisticasController = new ConsultarEstadisticasController();
 				consultarEstadisticasController.consultarEstadisticas();
+				consultarEstadisticasController.consultaTablaDePosiciones(Integer.valueOf(args[1]), Integer.valueOf(args[2]));
 				break;
 			case 0:
 
