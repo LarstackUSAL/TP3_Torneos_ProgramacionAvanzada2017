@@ -2,9 +2,13 @@ package ar.edu.usal.torneos.model.dao;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import ar.edu.usal.torneos.exception.EquipoInexistenteException;
@@ -231,5 +235,25 @@ public class EquiposDao {
 
 	public void setEquipos(ArrayList<Equipos> equipos) {
 		this.equipos = equipos;
+	}
+
+	public void addTorneoArchivoTorneosEquipos(int id, ArrayList<Equipos> equiposArray) throws IOException {
+		
+		FileWriter torneosEquiposFile = new FileWriter("./archivos/TorneosEquipos.txt", true);
+		PrintWriter torneosEquiposOut = new PrintWriter(torneosEquiposFile);
+
+		Iterator equiposIterator = equiposArray.iterator();
+		
+		String stringPrint = String.valueOf(id);
+		
+		while (equiposIterator.hasNext()) {
+			
+			Equipos equipo = (Equipos)equiposIterator.next();
+			
+			stringPrint = stringPrint + ";" + equipo.getNombre().trim();
+		}
+
+		torneosEquiposOut.println(stringPrint);
+		torneosEquiposOut.close();
 	}
 }

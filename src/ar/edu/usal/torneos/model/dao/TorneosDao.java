@@ -252,6 +252,8 @@ public class TorneosDao implements ITorneoEmpresa{
 
 			this.actualizarInscripcionesValorAnual();
 			this.actualizarArchivoTorneo();
+			equiposDao.addTorneoArchivoTorneosEquipos(torneo.getId(), torneo.getEquipos());
+			
 			partidosDao.actualizarFixture();
 
 			torneoCreado = true;
@@ -427,7 +429,7 @@ public class TorneosDao implements ITorneoEmpresa{
 
 			//Setamos la fecha de fin torneo, por lo tanto actualizamos el archivo.
 			this.actualizarArchivoTorneo();
-
+			
 		} catch (IOException e) {
 
 			System.out.println("Se ha verificado un error al grabar la tabla de posiciones.");
