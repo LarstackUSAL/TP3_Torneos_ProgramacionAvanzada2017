@@ -427,7 +427,9 @@ public class TorneosDao implements ITorneoEmpresa{
 			tablaPosicionesOut.close();
 			tablaPosicionesFile.close();
 
-			//Setamos la fecha de fin torneo, por lo tanto actualizamos el archivo.
+			//Setamos la fecha de fin torneo y las puntuaciones max y min, por lo tanto actualizamos el archivo.
+			torneo.setPuntuacionMaxima(tablaPosiciones.get(0).getPuntos());
+			torneo.setPuntuacionMinima(tablaPosiciones.get(tablaPosiciones.size()-1).getPuntos());
 			this.actualizarArchivoTorneo();
 			
 		} catch (IOException e) {
