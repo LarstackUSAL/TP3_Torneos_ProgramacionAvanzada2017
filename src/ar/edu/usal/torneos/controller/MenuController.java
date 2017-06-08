@@ -30,6 +30,7 @@ public class MenuController {
 
 				MostrarGanadoresPremiosController mostrarGanadoresPremiosController = new MostrarGanadoresPremiosController();
 				mostrarGanadoresPremiosController.mostrarGanadoresPremios();
+				break;
 			case 4:
 
 				ConsultarEstadisticasController consultarEstadisticasController = new ConsultarEstadisticasController();

@@ -12,6 +12,7 @@ import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import ar.edu.usal.torneos.exception.EquipoInexistenteException;
 import ar.edu.usal.torneos.model.dto.Equipos;
 import ar.edu.usal.torneos.model.dto.Partidos;
 import ar.edu.usal.torneos.model.dto.Torneos;
@@ -66,8 +67,31 @@ public class PartidosDao {
 				HashMap<String, Object> datosPartidoMap = new HashMap<String, Object>();
 
 				Calendar fechaPartido = Validador.stringToCalendar(fixtureScanner.next().trim(), "dd/MM/yyyy");
-				Equipos equipoLocal = equiposDao.getEquipoByName(fixtureScanner.next().trim());  
-				Equipos equipoVisitante = equiposDao.getEquipoByName(fixtureScanner.next().trim());
+				Equipos equipoLocal = null;
+				String nombreEquipoLocal = fixtureScanner.next().trim();
+				
+				try{
+				
+					equipoLocal = equiposDao.getEquipoByName(nombreEquipoLocal);  
+				
+				}catch(EquipoInexistenteException e){
+					
+					equipoLocal = new Equipos();
+					equipoLocal.setNombre(nombreEquipoLocal);
+				}
+				
+				Equipos equipoVisitante = null;
+				String nombreEquipoVisitante = fixtureScanner.next().trim();
+				try{
+					
+					equipoVisitante = equiposDao.getEquipoByName(nombreEquipoVisitante);  
+				
+				}catch(EquipoInexistenteException e){
+					
+					equipoVisitante = new Equipos();
+					equipoVisitante.setNombre(nombreEquipoVisitante);
+				}
+				
 				int idTorneo = 0; 
 
 				Iterator<Integer> resultadosKeySetIterator = resultadosMap.keySet().iterator();
@@ -106,6 +130,7 @@ public class PartidosDao {
 
 				resultadosPartidosTorneos.get(idTorneo).add(datosPartidoMap);
 
+				fixtureScanner.nextLine();
 			}
 
 			fixtureScanner.close();
@@ -281,7 +306,7 @@ public class PartidosDao {
 				String golesVisitante = Validador.fillString(String.valueOf(partido.getGolesVisitante()), 2, "0", true); //2
 				String idTorneo = Validador.fillString(String.valueOf(torneo.getId()), 4, "0", true); //4
 				
-				resultadosOut.println(fechaPartido + equipoLocal + equipoVisitante + idTorneo);
+				resultadosOut.println(fechaPartido + equipoLocal + equipoVisitante + golesLocal + golesVisitante + idTorneo);
 			}
 			
 		}

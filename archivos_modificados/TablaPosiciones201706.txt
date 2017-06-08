@@ -1,0 +1,4 @@
+ROMA	10	2	4	0	8	3	5
+VamosEquipo	7	1	4	1	4	4	0
+SuperTeam	6	0	6	0	1	1	0
+Sportivo	4	0	4	2	2	7	-5

@@ -7,7 +7,6 @@ import ar.edu.usal.torneos.model.dao.EquiposDao;
 public class Equipos implements Comparable<Equipos> {
 
 	private String nombre;
-	private String cuil;
 	private ArrayList<Jugadores> jugadores;
 	private int puntos;
 	private int goles;
@@ -16,10 +15,9 @@ public class Equipos implements Comparable<Equipos> {
 	private int cantidadPartidosPerdidos;
 	private int golesEnContra;
 	
-	public Equipos(String nombre, String cuil, ArrayList<Jugadores> jugadores, int puntos) {
+	public Equipos(String nombre, ArrayList<Jugadores> jugadores, int puntos) {
 		super();
 		this.nombre = nombre;
-		this.cuil = cuil;
 		this.jugadores = jugadores;
 		this.setPuntos(puntos);
 	}
@@ -45,14 +43,6 @@ public class Equipos implements Comparable<Equipos> {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	}
-
-	public String getCuil() {
-		return cuil;
-	}
-
-	public void setCuil(String cuil) {
-		this.cuil = cuil;
 	}
 
 	public ArrayList<Jugadores> getJugadores() {
@@ -114,22 +104,22 @@ public class Equipos implements Comparable<Equipos> {
 	@Override
 	public int compareTo(Equipos equipo) {
 		
-		int resultado = Integer.valueOf(this.puntos).compareTo(Integer.valueOf(equipo.puntos));
+		int resultado = Integer.valueOf(equipo.puntos).compareTo(Integer.valueOf(this.puntos));
 		
 		if(resultado == 0){
 			
-			resultado = Integer.valueOf(this.goles - this.golesEnContra).compareTo(Integer.valueOf(equipo.getGoles() - equipo.getGolesEnContra()));
+			resultado = Integer.valueOf(equipo.goles - equipo.golesEnContra).compareTo(Integer.valueOf(this.getGoles() - this.getGolesEnContra()));
 			
 			if(resultado == 0){
 				
-				resultado = Integer.valueOf(this.goles).compareTo(Integer.valueOf(equipo.getGoles()));
+				resultado = Integer.valueOf(equipo.goles).compareTo(Integer.valueOf(this.getGoles()));
 				
 				if(resultado == 0){
 					
-					resultado = Integer.valueOf(this.golesEnContra).compareTo(Integer.valueOf(equipo.getGolesEnContra()));
+					resultado = Integer.valueOf(equipo.golesEnContra).compareTo(Integer.valueOf(this.getGolesEnContra()));
 					
 					//Si tiene mas goles en contra debe ser penalizado en la tabla respecto al otro equipo.
-					resultado = resultado > 0 ? -1 : 1;
+//					resultado = resultado > 0 ? -1 : 1;
 				}
 			}
 		}

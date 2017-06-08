@@ -31,4 +31,9 @@ public class RegistrarResultadoView {
 		return Validador.insertInt("Ingresar goles del equipo visitante: ", 0, 99, false);
 	}
 
+	public void noHayTorneosEnCurso() {
+		System.out.println();
+		System.out.println("Todos los torneos han finalizado.");
+	}
+
 }

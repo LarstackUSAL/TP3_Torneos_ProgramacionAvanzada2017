@@ -45,8 +45,6 @@ public class EquiposDao {
 
 		Scanner equiposScanner;
 
-		TorneosDao torneosDao = TorneosDao.getInstance();
-
 		File directoryArchivos = new File("./archivos/");
 		File[] archivosArray = directoryArchivos.listFiles();
 
@@ -101,7 +99,7 @@ public class EquiposDao {
 
 										for (int j = 0; j < this.equipos.size(); j++) {
 
-											Equipos equipoTmp = this.equipos.get(i);
+											Equipos equipoTmp = this.equipos.get(j);
 
 											if(equipoTmp.getJugadores().contains(jugador)){
 

@@ -3,13 +3,15 @@ package ar.edu.usal.torneos.view;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import ar.edu.usal.torneos.utils.Validador;
+
 public class ConsultarEstadisticasView {
 
 	public void mostrarEstadisticasTorneos(String cantidadTorneos, String promedioGoles,
 			boolean hayTorneoPendiente) {
 		
 		System.out.println();
-		System.out.println("Se han jugado " + cantidadTorneos);
+		System.out.println("Torneos jugados: " + cantidadTorneos);
 		
 		if(hayTorneoPendiente){
 			
@@ -26,7 +28,7 @@ public class ConsultarEstadisticasView {
 		System.out.println();
 		System.out.println("TABLA POSICIONES REVERSE");
 		
-		System.out.println("NOMBRE\t" +
+		System.out.println(Validador.fillString("NOMBRE", 45, " ", false) +
 				"PTS\t" +
 				"PG\t" +
 				"PE\t" +

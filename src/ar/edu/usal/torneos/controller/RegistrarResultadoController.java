@@ -15,46 +15,51 @@ public class RegistrarResultadoController {
 	private RegistrarResultadoView registrarResultadoView;
 
 	public RegistrarResultadoController(){
-		
+
 		this.registrarResultadoView = new RegistrarResultadoView();
 	}
-	
+
 	public void registrarResultado() {
-		
+
 		TorneosDao torneosDao = TorneosDao.getInstance();
 		Torneos torneo = torneosDao.getTorneoById(torneosDao.getIdTorneoActual());
-		
-		ArrayList<String> partidosStringList = new ArrayList<String>();
-		
-		for (int i = 0; i < torneo.getPartidos().size(); i++) {
+
+		if(torneo.getAnioFinTorneo() == 0){
+			ArrayList<String> partidosStringList = new ArrayList<String>();
+
+			for (int i = 0; i < torneo.getPartidos().size(); i++) {
+
+				Partidos partido = torneo.getPartidos().get(i);
+				String partidosString = (i+1) + ". " + partido.getEquipoLocal().getNombre().trim()
+						+ " - " + partido.getEquipoVisitante().getNombre().trim();
+
+				partidosStringList.add(partidosString);
+			}
+
+			int numeroPartido = registrarResultadoView.elegirPartido(partidosStringList);
+
+			Partidos partido = torneo.getPartidos().get(numeroPartido-1);
+
+			int golesLocal = registrarResultadoView.ingresarGolesLocal();
+			int golesVisitante = registrarResultadoView.ingresarGolesVisitante();
+
+			partido.setGolesLocal(golesLocal);
+			partido.setGolesVisitante(golesVisitante);
+
+			PartidosDao partidosDao = PartidosDao.getInstance();
+			try {
+
+				partidosDao.actualizarArchivoResultados();
+
+			} catch (IOException e) {
+
+				System.out.println("Se ha verificado un error al actualizar el archivo de resultados.");
+			}
+		}else{
 			
-			Partidos partido = torneo.getPartidos().get(i);
-			String partidosString = (i+1) + ". " + partido.getEquipoLocal().getNombre().trim()
-					+ " - " + partido.getEquipoVisitante().getNombre().trim();
-			
-			partidosStringList.add(partidosString);
-		}
-		
-		int numeroPartido = registrarResultadoView.elegirPartido(partidosStringList);
-		
-		Partidos partido = torneo.getPartidos().get(numeroPartido-1);
-		
-		int golesLocal = registrarResultadoView.ingresarGolesLocal();
-		int golesVisitante = registrarResultadoView.ingresarGolesVisitante();
-		
-		partido.setGolesLocal(golesLocal);
-		partido.setGolesVisitante(golesVisitante);
-		
-		PartidosDao partidosDao = PartidosDao.getInstance();
-		try {
-			
-			partidosDao.actualizarArchivoResultados();
-		
-		} catch (IOException e) {
-			
-			System.out.println("Se ha verificado un error al actualizar el archivo de resultados.");
+			registrarResultadoView.noHayTorneosEnCurso();
 		}
 	}
 
-	
+
 }

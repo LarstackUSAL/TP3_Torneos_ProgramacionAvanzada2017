@@ -17,8 +17,8 @@ public class Torneos implements IPagoInscripcion{
 	private int puntuacionMinima;
 	private int totalGoles;
 
-	private ArrayList<Equipos> equipos;
-	private ArrayList<Partidos> partidos;
+	private ArrayList<Equipos> equipos =  new ArrayList<Equipos>();
+	private ArrayList<Partidos> partidos =  new ArrayList<Partidos>();
 	
 	public Torneos(){}
 

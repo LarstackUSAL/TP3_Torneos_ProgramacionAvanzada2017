@@ -64,52 +64,55 @@ public class TorneosDao implements ITorneoEmpresa{
 
 			HashMap<Integer,Double> valoresMap = this.loadCostoInscripcion();
 
-			EquiposDao equiposDao = EquiposDao.getInstance();
-			PartidosDao partidosDao = PartidosDao.getInstance();
+			if(!valoresMap.isEmpty()){
+				EquiposDao equiposDao = EquiposDao.getInstance();
+				PartidosDao partidosDao = PartidosDao.getInstance();
 
-			while(torneosScanner.hasNextLine()){
+				while(torneosScanner.hasNextLine()){
 
-				int id = torneosScanner.nextInt();
-				int anioInicioTorneo = torneosScanner.nextInt();
-				int cantidadEquipos = torneosScanner.nextInt();
-				int puntuacionMaxima = torneosScanner.nextInt();
-				int puntuacionMinima = torneosScanner.nextInt();
-				int totalGoles = torneosScanner.nextInt();
-				int mesFinTorneo = torneosScanner.nextInt();
-				int anioFinTorneo = torneosScanner.nextInt();
-				
-				Torneos torneo = new Torneos();
-				this.torneosList.add(torneo);
-				
-				torneo.setId(id);
-				torneo.setAnioInicioTorneo(anioInicioTorneo);
-				torneo.setCantidadEquipos(cantidadEquipos);
-				torneo.setPuntuacionMaxima(puntuacionMaxima);
-				torneo.setPuntuacionMinima(puntuacionMinima);
-				torneo.setTotalGoles(totalGoles);
-				torneo.setAnioFinTorneo(anioFinTorneo);
-				torneo.setMesFinTorneo(mesFinTorneo);
-				torneo.setCostoInscripcion(valoresMap.get(anioInicioTorneo));
+					int id = torneosScanner.nextInt();
+					int anioInicioTorneo = torneosScanner.nextInt();
+					int cantidadEquipos = torneosScanner.nextInt();
+					int puntuacionMaxima = torneosScanner.nextInt();
+					int puntuacionMinima = torneosScanner.nextInt();
+					int totalGoles = torneosScanner.nextInt();
+					int mesFinTorneo = torneosScanner.nextInt();
+					int anioFinTorneo = torneosScanner.nextInt();
 
-				torneo.setEquipos(equiposDao.getEquiposTorneoById(id));
+					Torneos torneo = new Torneos();
+					this.torneosList.add(torneo);
 
-				ArrayList<HashMap> datosTmpList = partidosDao.getResultadosPartidosTorneos().get(id);
+					torneo.setId(id);
+					torneo.setAnioInicioTorneo(anioInicioTorneo);
+					torneo.setCantidadEquipos(cantidadEquipos);
+					torneo.setPuntuacionMaxima(puntuacionMaxima);
+					torneo.setPuntuacionMinima(puntuacionMinima);
+					torneo.setTotalGoles(totalGoles);
+					torneo.setAnioFinTorneo(anioFinTorneo);
+					torneo.setMesFinTorneo(mesFinTorneo);
+					torneo.setCostoInscripcion(valoresMap.get(anioInicioTorneo));
 
-				for (int i = 0; i < datosTmpList.size(); i++) {				
+					torneo.setEquipos(equiposDao.getEquiposTorneoById(id));
 
-					HashMap datosTmp = datosTmpList.get(i);
+					ArrayList<HashMap> datosTmpList = partidosDao.getResultadosPartidosTorneos().get(id);
 
-					torneo.setPartidos((Equipos)datosTmp.get("equipoLocal"),
-							(Equipos)datosTmp.get("equipoVisitante"), 
-							(int)datosTmp.get("golesLocal"),
-							(int)datosTmp.get("golesVisitante"),
-							(Calendar)datosTmp.get("fechaPartido"), null);
+					for (int i = 0; i < datosTmpList.size(); i++) {				
+
+						HashMap datosTmp = datosTmpList.get(i);
+
+						torneo.setPartidos((Equipos)datosTmp.get("equipoLocal"),
+								(Equipos)datosTmp.get("equipoVisitante"), 
+								(int)datosTmp.get("golesLocal"),
+								(int)datosTmp.get("golesVisitante"),
+								(Calendar)datosTmp.get("fechaPartido"), null);
+					}
+
+					//TABLA POSICIONES
+					this.loadTablaPosiciones(mesFinTorneo, anioFinTorneo);
+					
+					torneosScanner.nextLine();
 				}
-
-				//TABLA POSICIONES
-				this.loadTablaPosiciones(mesFinTorneo, anioFinTorneo);
 			}
-
 			torneosScanner.close();
 
 		}catch(InputMismatchException e){
@@ -188,7 +191,7 @@ public class TorneosDao implements ITorneoEmpresa{
 			Torneos torneo = this.torneosList.get(i);
 
 			torneosOut.println(
-							torneo.getId() + " " +
+					torneo.getId() + " " +
 							torneo.getAnioInicioTorneo() + " " +
 							torneo.getCantidadEquipos() + " " +
 							torneo.getPuntuacionMaxima() + " " +
@@ -196,7 +199,7 @@ public class TorneosDao implements ITorneoEmpresa{
 							torneo.getTotalGoles()+ " " +
 							torneo.getMesFinTorneo()+ " " +
 							torneo.getAnioFinTorneo()
-							);
+					);
 		}
 
 		torneosOut.close();
@@ -246,14 +249,25 @@ public class TorneosDao implements ITorneoEmpresa{
 			torneo.setEquipos(equiposDao.getEquipos());
 
 			PartidosDao partidosDao = PartidosDao.getInstance();
-			partidosDao.generarFixture(torneo, nDiasEntrePartidos);
+			ArrayList<HashMap> fixture = partidosDao.generarFixture(torneo, nDiasEntrePartidos);
+
+			for (int i = 0; i < fixture.size(); i++) {
+
+				HashMap partidoMap = fixture.get(i);
+
+				Equipos equipoLocal = (Equipos) partidoMap.get("equipoLocal");
+				Equipos equipoVisitante = (Equipos) partidoMap.get("equipoVisitante");
+				Calendar fechaPartido = (Calendar) partidoMap.get("fechaCalendar");
+
+				torneo.setPartidos(equipoLocal, equipoVisitante, 0, 0, fechaPartido, null);
+			}
 
 			torneosList.add(torneo);
 
 			this.actualizarInscripcionesValorAnual();
 			this.actualizarArchivoTorneo();
 			equiposDao.addTorneoArchivoTorneosEquipos(torneo.getId(), torneo.getEquipos());
-			
+
 			partidosDao.actualizarFixture();
 
 			torneoCreado = true;
@@ -358,10 +372,9 @@ public class TorneosDao implements ITorneoEmpresa{
 
 	public static int getNextIdTorneo() {
 
-		int idReturn = nextIdTorneo;
 		nextIdTorneo++;
 
-		return idReturn;
+		return nextIdTorneo;
 	}
 
 	public static int getIdTorneoActual(){
@@ -384,10 +397,10 @@ public class TorneosDao implements ITorneoEmpresa{
 		String[] fechaFinTorneoArray = fechaFinTorneo.split("/");
 		String anioFinTorneo = fechaFinTorneoArray[0]; 
 		String mesFinTorneo = Validador.fillString(fechaFinTorneoArray[1], 2, "0", true);
-		
+
 		torneo.setAnioFinTorneo(Integer.valueOf(anioFinTorneo));
 		torneo.setMesFinTorneo(Integer.valueOf(mesFinTorneo));
-		
+
 		FileWriter tablaPosicionesFile;
 		try {
 			tablaPosicionesFile = new FileWriter("./archivos/TablaPosiciones"+
@@ -431,7 +444,7 @@ public class TorneosDao implements ITorneoEmpresa{
 			torneo.setPuntuacionMaxima(tablaPosiciones.get(0).getPuntos());
 			torneo.setPuntuacionMinima(tablaPosiciones.get(tablaPosiciones.size()-1).getPuntos());
 			this.actualizarArchivoTorneo();
-			
+
 		} catch (IOException e) {
 
 			System.out.println("Se ha verificado un error al grabar la tabla de posiciones.");
@@ -445,49 +458,53 @@ public class TorneosDao implements ITorneoEmpresa{
 
 		return tablaPosiciones;
 	}
-	
+
 	private void loadTablaPosiciones(int mesFinTorneo, int anioFinTorneo) {
 
 		try{
-		File tablaPosicionesFile = new File("./archivos/TablaPosiciones"+
-					anioFinTorneo + mesFinTorneo +".txt");
+			File tablaPosicionesFile = new File("./archivos/TablaPosiciones"+
+					anioFinTorneo + Validador.fillString(String.valueOf(mesFinTorneo), 2, "0", true) +".txt");
 
-		Scanner tablaPosicionesScanner = new Scanner(tablaPosicionesFile);
+			if(tablaPosicionesFile.exists()){
+				Scanner tablaPosicionesScanner = new Scanner(tablaPosicionesFile);
 
-		EquiposDao equiposDao = EquiposDao.getInstance();
-		
-		while (tablaPosicionesScanner.hasNextLine()) {
-			
-			String nombre = tablaPosicionesScanner.next().trim();
-			int puntos = tablaPosicionesScanner.nextInt();
-			int cantidadPartidosGanados = tablaPosicionesScanner.nextInt();
-			int cantidadPartidosEmpatados = tablaPosicionesScanner.nextInt();
-			int cantidadPartidosPerdidos = tablaPosicionesScanner.nextInt();
-			int goles = tablaPosicionesScanner.nextInt();
-			int golesEnContra = tablaPosicionesScanner.nextInt();
-			int diferenciaGoles = tablaPosicionesScanner.nextInt();
-			
-			Equipos equipo = equiposDao.getEquipoByName(nombre);
-			
-			equipo.setPuntos(puntos);
-			equipo.setCantidadPartidosGanados(cantidadPartidosGanados);
-			equipo.setCantidadPartidosEmpatados(cantidadPartidosEmpatados);
-			equipo.setCantidadPartidosPerdidos(cantidadPartidosPerdidos);
-			equipo.setGoles(goles);
-			equipo.setGolesEnContra(golesEnContra);
-		}
+				EquiposDao equiposDao = EquiposDao.getInstance();
+
+				while (tablaPosicionesScanner.hasNextLine()) {
+
+					String nombre = tablaPosicionesScanner.next().trim();
+					int puntos = tablaPosicionesScanner.nextInt();
+					int cantidadPartidosGanados = tablaPosicionesScanner.nextInt();
+					int cantidadPartidosEmpatados = tablaPosicionesScanner.nextInt();
+					int cantidadPartidosPerdidos = tablaPosicionesScanner.nextInt();
+					int goles = tablaPosicionesScanner.nextInt();
+					int golesEnContra = tablaPosicionesScanner.nextInt();
+					int diferenciaGoles = tablaPosicionesScanner.nextInt();
+
+					Equipos equipo = equiposDao.getEquipoByName(nombre);
+
+					equipo.setPuntos(puntos);
+					equipo.setCantidadPartidosGanados(cantidadPartidosGanados);
+					equipo.setCantidadPartidosEmpatados(cantidadPartidosEmpatados);
+					equipo.setCantidadPartidosPerdidos(cantidadPartidosPerdidos);
+					equipo.setGoles(goles);
+					equipo.setGolesEnContra(golesEnContra);
+					
+					tablaPosicionesScanner.nextLine();
+				}
+			}
 		}catch(FileNotFoundException e){
-			
+
 			System.out.println("No se ha encontrado el archivo TablaPosiciones"+anioFinTorneo+mesFinTorneo+".txt");
 		}catch(EquipoInexistenteException e){
-			
+
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public double montoParaRepartir() {
-		
+
 		Torneos torneo = this.getTorneoById(this.getIdTorneoActual());
 		double costoInscripcion = torneo.getCostoInscripcion();
 		double tot = costoInscripcion * torneo.getEquipos().size();
@@ -495,17 +512,17 @@ public class TorneosDao implements ITorneoEmpresa{
 	}
 
 	public Torneos getTorneoByAnioMesFin(int anio, int mes) {
-		
+
 		Iterator torneosListIt = this.torneosList.iterator();
-		
+
 		while (torneosListIt.hasNext()) {
-			
+
 			Torneos torneo = (Torneos)torneosListIt.next();
-			
+
 			if(torneo.getAnioFinTorneo() == anio && torneo.getMesFinTorneo() == mes)
 				return torneo;
 		}
-		
+
 		return null;
 	}
 
@@ -513,7 +530,7 @@ public class TorneosDao implements ITorneoEmpresa{
 
 		ArrayList<Equipos> tablaPosiciones = this.getTablaPosiciones(torneo);
 		Collections.reverse(tablaPosiciones);
-		
+
 		return tablaPosiciones;
 	}
 }

@@ -1,0 +1,12 @@
+09/06/2017ROMA                                         VamosEquipo                                  03010002
+11/06/2017ROMA                                         Sportivo                                     05020002
+13/06/2017ROMA                                         SuperTeam                                    00000002
+15/06/2017VamosEquipo                                  ROMA                                         00000002
+17/06/2017VamosEquipo                                  Sportivo                                     02000002
+19/06/2017VamosEquipo                                  SuperTeam                                    00000002
+21/06/2017Sportivo                                     ROMA                                         00000002
+23/06/2017Sportivo                                     VamosEquipo                                  00000002
+25/06/2017Sportivo                                     SuperTeam                                    00000002
+27/06/2017SuperTeam                                    ROMA                                         00000002
+29/06/2017SuperTeam                                    VamosEquipo                                  01010002
+01/07/2017SuperTeam                                    Sportivo                                     00000002

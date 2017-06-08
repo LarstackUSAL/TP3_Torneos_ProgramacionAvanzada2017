@@ -6,6 +6,7 @@ import java.util.Iterator;
 import ar.edu.usal.torneos.model.dao.TorneosDao;
 import ar.edu.usal.torneos.model.dto.Equipos;
 import ar.edu.usal.torneos.model.dto.Torneos;
+import ar.edu.usal.torneos.utils.Validador;
 import ar.edu.usal.torneos.view.ConsultarEstadisticasView;
 
 public class ConsultarEstadisticasController {
@@ -74,7 +75,7 @@ public class ConsultarEstadisticasController {
 
 			tablaPosiciones.add(
 
-							nombre + "\t" +
+							Validador.fillString(nombre, 45, " ", false) + "\t" +
 							puntos + "\t" +
 							cantidadPartidosGanados + "\t" +
 							cantidadPartidosEmpatados + "\t" +
