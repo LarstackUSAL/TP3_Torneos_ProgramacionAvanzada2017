@@ -41,7 +41,7 @@ public class ConsultarEstadisticasController {
 			}
 		}
 		
-		double promedioGoles = hayTorneoPendiente ? (totalGoles / (cantidadTorneos - 1)) : (totalGoles / cantidadTorneos);
+		double promedioGoles = (hayTorneoPendiente && cantidadTorneos > 1) ? (totalGoles / (cantidadTorneos - 1)) : (totalGoles / cantidadTorneos);
 		
 		this.consultarEstadisticasView.mostrarEstadisticasTorneos(String.valueOf(cantidadTorneos),
 				String.valueOf(promedioGoles), hayTorneoPendiente);

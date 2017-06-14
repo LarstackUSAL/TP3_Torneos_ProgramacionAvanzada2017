@@ -220,6 +220,9 @@ public class PartidosDao {
 		ArrayList<HashMap> fixtureList = new ArrayList<HashMap>();
 
 		Calendar fechaPartido = Calendar.getInstance();
+		fechaPartido.set(Calendar.YEAR, 2017);
+		fechaPartido.set(Calendar.MONTH, Calendar.SEPTEMBER);
+		fechaPartido.set(Calendar.DAY_OF_MONTH, 21);
 
 		for (int i = 0; i < torneo.getEquipos().size(); i++) {
 
@@ -237,10 +240,8 @@ public class PartidosDao {
 
 				Calendar fechaPartidoTmp = Calendar.getInstance();
 				fechaPartidoTmp.setTime(fechaPartido.getTime());
-				fechaPartidoTmp.add(Calendar.DAY_OF_YEAR, nDiasEntrePartidos);
+				fechaPartido.add(Calendar.DAY_OF_YEAR, nDiasEntrePartidos);
 				partidoMap.put("fechaCalendar", fechaPartidoTmp);
-
-				fechaPartido.setTime(fechaPartidoTmp.getTime());
 
 				fixtureList.add(partidoMap);
 			}

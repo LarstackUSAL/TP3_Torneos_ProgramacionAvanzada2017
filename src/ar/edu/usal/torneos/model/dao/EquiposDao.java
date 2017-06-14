@@ -48,6 +48,8 @@ public class EquiposDao {
 		File directoryArchivos = new File("./archivos/");
 		File[] archivosArray = directoryArchivos.listFiles();
 
+		JugadoresDao jugadoresDao = JugadoresDao.getInstance();
+		
 		for (int i = 0; i < archivosArray.length; i++) {
 
 			File file = archivosArray[i];
@@ -95,7 +97,7 @@ public class EquiposDao {
 										String apellido = datosJugador[1].trim();
 										String nombre = datosJugador[2].trim();
 
-										Jugadores jugador = new Jugadores(nombre, apellido, cuil);
+										Jugadores jugador = jugadoresDao.getJugadorByCuil(cuil);
 
 										for (int j = 0; j < this.equipos.size(); j++) {
 
